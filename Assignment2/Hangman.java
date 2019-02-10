@@ -30,7 +30,7 @@ public class Hangman {
         {
         
         }
-        else
+        else if (response == 3)
         {
             
         }
