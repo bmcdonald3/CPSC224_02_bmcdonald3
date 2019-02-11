@@ -5,92 +5,95 @@ import java.util.*;
  * and open the template in the editor.
  */
 
-/**
- *
- * @author Ben McDonald and Ryan Schoenlin
- */
+import javax.swing.JOptionPane;
+
 public class Hangman {
-    public static void main(String[] args)
-    {
-        String[] words = {"hello","pizza","apple","sauce","horse"};
-        menu(words);
-    }
-    
-    public static void menu(String[] words)
-    {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Menu:" + "\n" + "1. Random Word\n" +
-                "2. User entered word\n3. Exit game");
-        int response = scanner.nextInt();
-        if(response == 1)
-        {
-            playRandom(words);
-        }
-        else if(response == 2)
-        {
-        
-        }
-        else if (response == 3)
-        {
-            
-        }
-    }
-    
-    public static void playRandom(String[] words)
-    {
-        Scanner scanner = new Scanner(System.in);
-        boolean isLetter = false;
-        boolean isSolved = false;
-        String input;
-        char guess;
-        int strikes = 0;
-        Random R1 = new Random();
-        int number = R1.nextInt(4) + 1; //Index of random word
-        String wordToGuess = words[number];
-        char[] userWord = {'-','-','-','-','-'};
-        while(!isSolved && strikes < 6)
-        {
-            System.out.print("Word to guess:");
-            printArr(userWord);
-            System.out.println("Strikes: " + strikes);
-            System.out.print("Enter letter:");
-            input = scanner.next();
-            guess = input.charAt(0);
-            guess = Character.toLowerCase(guess);
-            for(int i = 0; i < 5; i++)
-            {
-                if(guess == wordToGuess.charAt(i))
-                {
-                    userWord[i] = wordToGuess.charAt(i);
-                    isLetter = true;
-                }
-            }
-            if(!isLetter)
-                strikes++;
-            isLetter = false;
-            isSolved = checkWin(wordToGuess, userWord);
-        }
-        if(isSolved)
-            System.out.println("You win");
-        else
-            System.out.println("You lose.");
-        System.out.println("The word to guess was: " + wordToGuess);
-    }
-    
-    public static void printArr(char[] arr)
-    {
-        for(int i = 0; i < 5; i++)
-            System.out.print(arr[i]);
-        System.out.println();
-    }
-    
-    public static boolean checkWin(String word, char[] guess)
-    {
-        for(int i = 0; i < 5; i++)
-        {
-            if(word.charAt(i) != guess[i])
-                return false;
-        }
-        return true;
-    }
+
+	public static void menu() {
+		Scanner scanner = new Scanner(System.in);
+		String in = JOptionPane.showInputDialog(null,
+				"Menu:" + "\n" + "1. Random Word\n" + "2. User entered word\n3. Exit game");
+		int response = Integer.parseInt(in);
+
+		// Random word
+		if (response == 1) {
+			play("");
+		}
+		// user entered word
+		else if (response == 2) {
+			// only allow Strings
+			String inString = "3";
+			while (!inString.matches("[a-zA-Z]+")) {
+				inString = JOptionPane.showInputDialog("Enter a word to guess: ");
+			}
+
+			play(inString);
+		}
+		// exit
+		else {
+
+		}
+	}
+
+	public static void play(String userWord) {
+		Scanner scanner = new Scanner(System.in);
+		String[] words = { "hello", "pizza", "apple", "sauce", "horse" };
+		boolean isLetter = false;
+		boolean isSolved = false;
+		String input = "3";
+		char guess = 0;
+		int strikes = 0;
+		String wordToGuess;
+
+		// play with random word if no userWord passed in
+		if (userWord == "") {
+			Random R1 = new Random();
+			int number = R1.nextInt(4) + 1; // Index of random word
+			wordToGuess = words[number];
+		}
+		// else play with userWord
+		else {
+			wordToGuess = userWord;
+		}
+
+		char[] userGuesses = { '-', '-', '-', '-', '-' };
+		while (!isSolved && strikes < 6) {
+			String userGuessesStr = new String(userGuesses);
+			JOptionPane.showMessageDialog(null, "Word to guess: " + userGuessesStr + " \nStrikes: " + strikes);
+
+			
+			//only allow letters as input
+			input = JOptionPane.showInputDialog("Enter Letter: ");
+			
+			while(!input.matches("[a-zA-Z]+")){
+				input = JOptionPane.showInputDialog("Enter Letter: ");
+			}
+			
+			guess = input.charAt(0);
+
+			guess = Character.toLowerCase(guess);
+			for (int i = 0; i < 5; i++) {
+				if (guess == wordToGuess.charAt(i)) {
+					userGuesses[i] = wordToGuess.charAt(i);
+					isLetter = true;
+				}
+			}
+			if (!isLetter)
+				strikes++;
+			isLetter = false;
+			isSolved = checkWin(wordToGuess, userGuesses);
+		}
+		if (isSolved)
+			JOptionPane.showMessageDialog(null, "You Win.");
+		else
+			JOptionPane.showMessageDialog(null, "You Lose. " + "The word to guess was: " + wordToGuess);
+	}
+
+	public static boolean checkWin(String word, char[] guess) {
+		for (int i = 0; i < 5; i++) {
+			if (word.charAt(i) != guess[i])
+				return false;
+		}
+		return true;
+	}
 }
